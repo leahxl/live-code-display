@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>数字显示</title>
+  <style>
+    body {
+      background: #000;
+      color: #0f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      font-size: 10vw;
+      margin: 0;
+      font-family: monospace;
+    }
+  </style>
+</head>
+<body>
+  <div id="number">------</div>
+
+  <script>
+    async function fetchNumber() {
+      try {
+        const res = await fetch('data.json');
+        const data = await res.json();
+        document.getElementById('number').textContent = data.code || '------';
+      } catch (e) {
+        document.getElementById('number').textContent = 'ERROR';
+      }
+    }
+
+    fetchNumber();
+    setInterval(fetchNumber, 3000); // 每 60 秒刷新一次
+  </script>
+</body>
+</html>
