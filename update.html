@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>更新数字</title>
   <style>
     body {
@@ -9,35 +9,77 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      margin-top: 50px;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
     }
     input {
       font-size: 2em;
-      text-align: center;
       width: 200px;
+      text-align: center;
     }
     button {
-      margin-top: 20px;
       font-size: 1.2em;
+      margin-top: 1em;
+      padding: 0.5em 1em;
+    }
+    #status {
+      margin-top: 1em;
+      font-size: 1em;
+      color: green;
     }
   </style>
 </head>
 <body>
-  <h1>复制 JSON 内容去 GitHub 更新</h1>
-  <input id="numInput" maxlength="6" placeholder="123456" />
-  <button onclick="generate()">生成 JSON</button>
-
-  <pre id="output"></pre>
+  <input type="text" id="number" placeholder="输入六位数字" maxlength="6" />
+  <button onclick="updateData()">更新</button>
+  <div id="status"></div>
 
   <script>
-    function generate() {
-      const val = document.getElementById('numInput').value;
-      if (!/^\d{6}$/.test(val)) {
-        document.getElementById('output').textContent = '请输入6位数字';
+    const token = "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";  // 保密使用
+    const username = "leahxl";
+    const repo = "live-code-display";
+    const filePath = "data.json";
+
+    async function updateData() {
+      const input = document.getElementById("number").value;
+      const status = document.getElementById("status");
+      if (!/^\d{1,6}$/.test(input)) {
+        status.textContent = "请输入1~6位数字。";
+        status.style.color = "red";
         return;
       }
-      const json = JSON.stringify({ code: val }, null, 2);
-      document.getElementById('output').textContent = json;
+
+      // 获取文件的 SHA
+      const res1 = await fetch(`https://api.github.com/repos/${username}/${repo}/contents/${filePath}`, {
+        headers: {
+          Authorization: `token ${token}`,
+        },
+      });
+      const file = await res1.json();
+
+      // 更新文件
+      const content = btoa(JSON.stringify({ value: input }, null, 2));
+      const res2 = await fetch(`https://api.github.com/repos/${username}/${repo}/contents/${filePath}`, {
+        method: "PUT",
+        headers: {
+          Authorization: `token ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          message: "自动更新 data.json",
+          content: content,
+          sha: file.sha,
+        }),
+      });
+
+      if (res2.ok) {
+        status.textContent = "更新成功！";
+        status.style.color = "green";
+      } else {
+        status.textContent = "更新失败。请检查网络或权限。";
+        status.style.color = "red";
+      }
     }
   </script>
 </body>
