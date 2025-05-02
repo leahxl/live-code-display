@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>更新数字</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 50px;
+    }
+    input {
+      font-size: 2em;
+      text-align: center;
+      width: 200px;
+    }
+    button {
+      margin-top: 20px;
+      font-size: 1.2em;
+    }
+  </style>
+</head>
+<body>
+  <h1>复制 JSON 内容去 GitHub 更新</h1>
+  <input id="numInput" maxlength="6" placeholder="123456" />
+  <button onclick="generate()">生成 JSON</button>
+
+  <pre id="output"></pre>
+
+  <script>
+    function generate() {
+      const val = document.getElementById('numInput').value;
+      if (!/^\d{6}$/.test(val)) {
+        document.getElementById('output').textContent = '请输入6位数字';
+        return;
+      }
+      const json = JSON.stringify({ code: val }, null, 2);
+      document.getElementById('output').textContent = json;
+    }
+  </script>
+</body>
+</html>
