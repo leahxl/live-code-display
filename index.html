@@ -21,19 +21,16 @@
 <body>
   <div id="number">------</div>
 
-  <script>
-    async function fetchNumber() {
-      try {
-        const res = await fetch('data.json');
-        const data = await res.json();
-        document.getElementById('number').textContent = data.code || '------';
-      } catch (e) {
-        document.getElementById('number').textContent = 'ERROR';
-      }
-    }
+<script>
+  async function fetchNumber() {
+    const res = await fetch('data.json?t=' + Date.now()); // 加了时间戳参数
+    const data = await res.json();
+    document.getElementById('number').textContent = data.code || '------';
+  }
 
-    fetchNumber();
-    setInterval(fetchNumber, 3000); // 每 60 秒刷新一次
-  </script>
+  fetchNumber();
+  setInterval(fetchNumber, 3000);
+</script>
+
 </body>
 </html>
